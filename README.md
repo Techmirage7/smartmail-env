@@ -20,7 +20,7 @@ This project is built for the Meta × Hugging Face OpenEnv Hackathon.
 
 ---
 =====================
-## 🎯 Objective
+##  Objective
 =====================
 The AI agent must analyze incoming emails and take the correct action.
 

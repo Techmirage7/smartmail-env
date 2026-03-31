@@ -1,8 +1,12 @@
+from fastapi import FastAPI
 from env.environment import SmartMailEnv
 from env.models import Action
 
+app = FastAPI()
 
-def main():
+
+@app.get("/")
+def home():
     env = SmartMailEnv()
     observation = env.reset()
 
@@ -13,10 +17,9 @@ def main():
 
     observation, reward, done, info = env.step(action)
 
-    print("Server running successfully")
-    print(observation)
-    print(reward)
-
-
-if __name__ == "__main__":
-    main()
+    return {
+        "message": "SmartMail Space is running",
+        "reward": reward,
+        "done": done,
+        "info": info
+    }
