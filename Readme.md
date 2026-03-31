@@ -1,3 +1,11 @@
+---
+title: SmartMail Env
+emoji: 📧
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+---
 ============================
 # SmartMail Environment
 ============================
