@@ -1,0 +1,9 @@
+name: smartmail-env
+description: Real-world email triage environment for AI agents
+version: 1.0.0
+entrypoint: env.environment:SmartMailEnv
+
+tasks:
+  - easy
+  - medium
+  - hard

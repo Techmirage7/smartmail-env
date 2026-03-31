@@ -1,0 +1,4 @@
+pydantic
+openai
+openenv-core
+huggingface_hub
