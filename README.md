@@ -6,103 +6,145 @@ colorTo: purple
 sdk: docker
 pinned: false
 ---
-============================
-# SmartMail Environment
-============================
-SmartMail is a real-world OpenEnv environment designed for training and evaluating AI agents on **email triage and customer support workflows**.
 
-The environment simulates realistic inbox tasks such as:
+# 📧 SmartMail Environment
+
+## SmartMail RL Architecture
+![SmartMail Architecture](https://raw.githubusercontent.com/Techmirage7/smartmail-env/main/Architecture_diagram.png)
+
+SmartMail is a real-world **OpenEnv RL environment** designed for training and evaluating AI agents on **email triage and customer support workflows**.
+
+Built for the **Meta × Hugging Face OpenEnv Hackathon**.
+
+---
+
+## Overview
+
+The environment simulates realistic customer-support email tasks such as:
+
 - refund complaints
 - payment failures
-- security / spam risk emails
+- delayed deliveries
+- suspicious / phishing emails
+- escalation workflows
 
-This project is built for the Meta × Hugging Face OpenEnv Hackathon.
+It follows the standard OpenEnv interface:
 
----
-=====================
-##  Objective
-=====================
-The AI agent must analyze incoming emails and take the correct action.
+```python
+reset()
+step(action)
+state()
 
-Supported actions include:
-- `classify`
-- `escalate`
-- `mark_spam`
+    RL Workflow
 
-The goal is to maximize task completion reward.
+The environment supports a true RL-style loop:
 
----
-========================
-## Observation Space
-=========================
+
+Agent → Action → Environment → Reward → Next State
+
+Example state trajectory:
+
+new → under_review → resolved
+
+
+    Observation Space
+
 Each observation contains:
 
-- `email_subject`
-- `email_body`
-- `current_status`
-=========
-Example:
-=========
-```python
 {
-    "email_subject": "Refund not received",
-    "email_body": "I requested a refund 5 days ago...",
+    "email_subject": str,
+    "email_body": str,
+    "current_status": str
+}
+
+Example:
+
+{
+    "email_subject": "Package delayed",
+    "email_body": "My package was supposed to arrive yesterday...",
     "current_status": "new"
 }
-***************
-Action Space
-***************
+    Action Space
+
 Each action contains:
 
-action_type
-label
-============
-Example:
-============
 Action(
-    action_type="escalate",
-    label="refund_issue"
+    action_type="classify",
+    label="delivery_issue"
 )
-=======
-## Tasks
-=======
+
+    Supported actions:
+
+classify
+escalate
+mark_spam
+resolve
+
+
+    Tasks
+
+The environment currently supports multiple tasks with increasing complexity:
+
 🟢 Easy
-
-Refund issue triage
-
+refund issue
+delivery delay
 🟡 Medium
-
-Payment failure classification
-
+payment failure
+account login issue
 🔴 Hard
+phishing / security escalation
+spam + urgent customer complaint mix
 
-Security / suspicious email escalation
-====================
-##  Reward Logic
-====================
+    Reward Logic
+
+Progressive reward shaping:
 
 correct action → 0.4
-correct label → 0.4
+correct label → 0.2
+correct trajectory step → 0.2
 completion bonus → 0.2
 
-Maximum reward = 1.0
+Maximum reward:
 
-==============
-## Run locally
-==============
+1.0
+
+     Multi-Step Example
+
+Example rollout:
+
+Step 1:
+new → under_review
+reward = 0.6
+
+Step 2:
+under_review → resolved
+reward = 0.2
+
+Total reward = 0.8
+    
+    Run Locally
 python inference.py
-==============
-##  Docker
-==============
+    
+    Docker
 docker build -t smartmail-env .
 docker run --rm smartmail-env
 
-==================
-##   Validation
-==================
+    Validation
 openenv validate
 
 Status:
+
 Ready for multi-mode deployment
 
+     Hugging Face Space
 
+Live deployment:
+
+https://duniyakapapa007-smartmail-env.hf.space
+
+    Built With
+OpenEnv
+FastAPI
+Docker
+Hugging Face Spaces
+Python 3.12
