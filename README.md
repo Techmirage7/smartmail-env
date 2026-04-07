@@ -10,7 +10,7 @@ pinned: false
 # 📧 SmartMail Environment
 
 ## SmartMail RL Architecture
-![SmartMail Architecture](https://raw.githubusercontent.com/Techmirage7/smartmail-env/main/Architecture_diagram.png)
+![SmartMail Architecture](Architecture_diagram.png)
 
 SmartMail is a real-world **OpenEnv RL environment** designed for training and evaluating AI agents on **email triage and customer support workflows**.
 
