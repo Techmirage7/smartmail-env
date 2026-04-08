@@ -26,16 +26,21 @@ class SmartMailEnv:
         )
 
     def step(self, action):
-        score = grade_action(action, self.current_task)
         self.step_count += 1
 
+        # progressive reward shaping
         if self.step_count == 1:
+            score = grade_action(action, self.current_task)
             self.current_status = "under_review"
             done = False
+
         elif self.step_count == 2:
+            score = 0.2
             self.current_status = "resolved"
             done = True
+
         else:
+            score = 0.0
             done = True
 
         info = {
