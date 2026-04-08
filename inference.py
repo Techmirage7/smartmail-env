@@ -1,6 +1,5 @@
 import os
 from openai import OpenAI
-from streamlit import success
 from env.environment import SmartMailEnv
 from env.models import Action
 
