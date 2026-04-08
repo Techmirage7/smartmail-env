@@ -7,14 +7,21 @@ def grade_action(action, task):
 
     # correct label
     if action.label == task["expected_label"]:
-        score += 0.4
+        score += 0.35
 
-    # difficulty-based bonus
+    # difficulty bonus
     if task["difficulty"] == "easy":
-        score += 0.2
-    elif task["difficulty"] == "medium":
         score += 0.15
+    elif task["difficulty"] == "medium":
+        score += 0.12
     elif task["difficulty"] == "hard":
-        score += 0.1
+        score += 0.10
 
-    return round(min(score, 1.0), 2)
+    # STRICTLY keep score inside (0,1)
+    if score <= 0.0:
+        score = 0.05
+
+    if score >= 1.0:
+        score = 0.95
+
+    return round(score, 2)

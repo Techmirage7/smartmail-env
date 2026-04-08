@@ -84,7 +84,8 @@ def run_baseline():
 
     try:
         env = SmartMailEnv()
-        obs = env.reset()
+        for i in range(4):
+            obs = env.reset()
 
         # ALWAYS force proxy call
         client = OpenAI(
