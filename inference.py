@@ -4,15 +4,10 @@ from env.environment import SmartMailEnv
 from env.models import Action
 
 
-API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
+# MUST use injected variables exactly as required
+API_BASE_URL = os.environ["API_BASE_URL"]
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
-
-
-API_KEY = (
-    os.getenv("HF_TOKEN")
-    or os.getenv("API_KEY")
-    or os.getenv("OPENAI_API_KEY")
-)
+API_KEY = os.environ["API_KEY"]
 
 TASK_NAME = "smartmail_triage"
 BENCHMARK = "smartmail_env"
@@ -91,15 +86,13 @@ def run_baseline():
         env = SmartMailEnv()
         obs = env.reset()
 
-        
-        if not API_KEY:
-            action_type = "classify"
-        else:
-            client = OpenAI(
-                base_url=API_BASE_URL,
-                api_key=API_KEY
-            )
-            action_type = get_llm_action(client, obs)
+        # ALWAYS force proxy call
+        client = OpenAI(
+            base_url=API_BASE_URL,
+            api_key=API_KEY
+        )
+
+        action_type = get_llm_action(client, obs)
 
         action = Action(
             action_type=action_type,
