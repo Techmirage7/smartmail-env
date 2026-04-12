@@ -52,7 +52,7 @@ TASKS = [
         "expected_action": "escalate",
         "expected_label": "security_issue",
         "priority": "critical"
-    }
+    },
     {
     "id": 7,
     "difficulty": "hard",
@@ -61,7 +61,7 @@ TASKS = [
     "expected_action": "escalate",
     "expected_label": "vip_retention_issue",
     "priority": "critical"
-    }
+    },
     {
     "id": 8,
     "difficulty": "hard",
