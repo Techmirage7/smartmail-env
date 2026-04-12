@@ -53,4 +53,22 @@ TASKS = [
         "expected_label": "security_issue",
         "priority": "critical"
     }
+    {
+    "id": 7,
+    "difficulty": "hard",
+    "email_subject": "VIP client threatening cancellation",
+    "email_body": "I have been a premium customer for 3 years and will cancel if this is not resolved today.",
+    "expected_action": "escalate",
+    "expected_label": "vip_retention_issue",
+    "priority": "critical"
+    }
+    {
+    "id": 8,
+    "difficulty": "hard",
+    "email_subject": "Unauthorized charge on card",
+    "email_body": "A transaction of ₹15,000 was made without my consent.",
+    "expected_action": "escalate",
+    "expected_label": "fraud_issue",
+    "priority": "critical"
+    }
 ]

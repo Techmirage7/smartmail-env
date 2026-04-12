@@ -7,47 +7,51 @@ sdk: docker
 pinned: false
 ---
 
-# 📧 SmartMail Environment
+# SmartMail Environment
+### Real-World OpenEnv RL Benchmark for Intelligent Email Triage & Customer Support Workflows
 
-## SmartMail RL Architecture
+SmartMail is a **production-inspired OpenEnv reinforcement learning environment** designed for training and evaluating AI agents on realistic **enterprise email triage, escalation, and risk-sensitive customer support workflows**.
+
 ![SmartMail Architecture](Architecture_diagram.png)
 
-SmartMail is a real-world **OpenEnv RL environment** designed for training and evaluating AI agents on **email triage and customer support workflows**.
-
-Built for the **Meta × Hugging Face OpenEnv Hackathon**.
+Built for the **Meta PyTorch × Hugging Face OpenEnv Hackathon**, this environment simulates real-world support operations performed by human teams in e-commerce, fintech, and SaaS businesses.
 
 ---
 
-## Overview
+## Motivation
+Modern organizations handle thousands of support tickets and emails daily.
 
-The environment simulates realistic customer-support email tasks such as:
+Human agents routinely perform tasks such as:
 
-- refund complaints
-- payment failures
-- delayed deliveries
-- suspicious / phishing emails
-- escalation workflows
+- refund complaint resolution
+- package delay escalation
+- billing failure classification
+- suspicious login / phishing triage
+- fraud complaint escalation
+- VIP customer retention
+- spam / risk-sensitive routing
 
-It follows the standard OpenEnv interface:
+SmartMail provides a realistic RL benchmark for evaluating whether AI agents can learn these workflows using standard OpenEnv APIs.
 
-```python
-reset()
-step(action)
-state()
+## RL Workflow Architecture
 
-    RL Workflow
+                                    Incoming Email
+                                          ↓
+                                   Observation Space
+                               (subject + body + status)
+                                          ↓
+                                     Agent Action
+                      (classify / escalate / resolve / mark_spam)
+                                          ↓
+                                  Environment Step
+                                   (step(action))
+                                          ↓
+                                    Reward Signal
+                      (partial + completion + risk-aware shaping)
+                                          ↓
+                                  Next State / Done
 
-The environment supports a true RL-style loop:
-
-
-Agent → Action → Environment → Reward → Next State
-
-Example state trajectory:
-
-new → under_review → resolved
-
-
-    Observation Space
+## Observation Space
 
 Each observation contains:
 
@@ -60,89 +64,113 @@ Each observation contains:
 Example:
 
 {
-    "email_subject": "Package delayed",
-    "email_body": "My package was supposed to arrive yesterday...",
+    "email_subject": "Refund not received",
+    "email_body": "I requested a refund 5 days ago...",
     "current_status": "new"
 }
-    Action Space
+## Action Space
 
-Each action contains:
-
-Action(
-    action_type="classify",
-    label="delivery_issue"
-)
-
-    Supported actions:
+Supported actions:
 
 classify
 escalate
-mark_spam
 resolve
+mark_spam
 
+Example:
 
-    Tasks
+Action(
+    action_type="escalate",
+    label="refund_issue"
+)
+## Task Difficulty Levels
+## Easy
+refund not received
+package delayed
+## Medium
+payment failed
+suspicious login / phishing
+## Hard
+VIP client retention
+fraud complaint
+spam + security mixed risk
+urgent premium escalation
 
-The environment currently supports multiple tasks with increasing complexity:
+## Reward Design
 
-🟢 Easy
-refund issue
-delivery delay
-🟡 Medium
-payment failure
-account login issue
-🔴 Hard
-phishing / security escalation
-spam + urgent customer complaint mix
+SmartMail uses progressive reward shaping:
 
-    Reward Logic
+correct action → positive reward
+correct label → positive reward
+difficulty bonus → scaled reward
+critical priority → escalation bonus
+wrong action → penalty
+safe bounded score → strictly within (0,1)
 
-Progressive reward shaping:
+This creates meaningful RL learning signal across trajectory steps.
 
-correct action → 0.4
-correct label → 0.2
-correct trajectory step → 0.2
-completion bonus → 0.2
+## ⚙️ OpenEnv API Support
 
-Maximum reward:
+Implemented APIs:
 
-1.0
+reset()
+step(action)
+state()
 
-     Multi-Step Example
+Fully compatible with OpenEnv validation.
 
-Example rollout:
+## 📁 Project Structure
 
-Step 1:
-new → under_review
-reward = 0.6
+smartmail_env/
+│
+├── env/
+│   ├── environment.py      # Core RL environment logic
+│   ├── models.py           # Typed Observation and Action models
+│   ├── tasks.py            # Task definitions (easy → hard)
+│   ├── graders.py          # Reward and grading logic
+│
+├── server/
+│   └── app.py              # Hugging Face Space API server
+│
+├── inference.py            # Baseline agent rollout script
+├── Dockerfile              # Container deployment
+├── openenv.yaml            # OpenEnv metadata and spec
+├── README.md               # Documentation
+└── requirements.txt        # Python dependencies
 
-Step 2:
-under_review → resolved
-reward = 0.2
+## 🤖 Baseline Inference
 
-Total reward = 0.8
+The baseline agent uses OpenAI client + injected proxy API.
+
+It performs multi-task rollout over multiple difficulty levels and produces reproducible structured stdout logs.
+
+Example:
+
+[START]
+[STEP]
+[END]
     
-    Run Locally
+## 🐳 Run Locally
 python inference.py
     
-    Docker
+## Docker
 docker build -t smartmail-env .
 docker run --rm smartmail-env
 
-    Validation
+## Validation
 openenv validate
 
-Status:
-
+## Status:
 Ready for multi-mode deployment
 
      Hugging Face Space
 
-Live deployment:
+## Live Deployment:
 
-https://duniyakapapa007-smartmail-env.hf.space
+GitHub: https://github.com/Techmirage7/smartmail-env
+HF Space: https://huggingface.co/spaces/DuniyakaPAPA007/smartmail-env
 
-    Built With
+## Built With
 OpenEnv
 FastAPI
 Docker
